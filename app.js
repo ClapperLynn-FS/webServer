@@ -8,22 +8,38 @@ http.createServer(function(req,res){
 
     let parsed = url.parse(req.url);
     let filename = path.parse(parsed.pathname);
-    let filen="";
     
-    if(filename.name == ""){
-        filen = index.html;
-    }
-    else{
-        filen = filename.name;
-    }
-    filen = filename.name;
-
-    fs.readFile(filen+".html",function(err,data){
-        
-        res.writeHead(200);
-        res.write("<script></script>");
-        res.end(data);
-
-    })
     
+    filen = filename.name == ""?"index":filename.name;
+    ext = filename.ext == ""?".html":filename.ext;
+    dir = filename.dir == "/"?"":filename.dir+"/";
+    page = filename.name == ""?"index.html":filename.name;
+
+    f = (dir+filen+ext).replace("/","");
+console.log(ext);
+    var mimeTypes = {
+        '.html':'text/html',
+        '.js':'tet/javascript',
+        '.css':'text/css',
+        '.png':'image/png',
+        '.jpg':'image/jpg',
+        '.gif':'image/gif'
+    };
+    
+    if(f){
+        fs.readFile(f,function(err,data){
+    
+            if(page){
+                if(mimeTypes.hasOwnProperty(ext)){
+                    res.writeHead(200, {'Content-Type': 'mimeTypes.'+ext});
+                    res.write("<script>var page='"+filen+"';</script>");
+                    res.end(data,'utf-8');
+                }
+            }
+
+            
+    
+        })
+    
+}
 }).listen("8080")
